@@ -18,8 +18,8 @@ namespace HotKeyEditor
         {
             
             InitializeComponent();
-            richTextBox2.PreviewKeyDown += OnPreviewKeyDown;
-            richTextBox2.KeyDown += OnKeyDown;
+            fastColoredTextBox1.PreviewKeyDown += OnPreviewKeyDown;
+            fastColoredTextBox1.KeyDown += OnKeyDown;
         }
 
         private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -36,7 +36,7 @@ namespace HotKeyEditor
             if (e.Data.GetDataPresent(DataFormats.Text))
             {
                 e.Effect = DragDropEffects.Move;
-                richTextBox2.Text = e.Data.GetData(DataFormats.Text).ToString();
+                fastColoredTextBox1.Text = e.Data.GetData(DataFormats.Text).ToString();
             }
         }
 
@@ -46,17 +46,18 @@ namespace HotKeyEditor
             {
                 if (fname != string.Empty)
                 {
-                    File.WriteAllText(fname, richTextBox2.Text);
+                    File.WriteAllText(fname, fastColoredTextBox1.Text);
                 }
                 else
                 {
                     saveFileDialog1.FileName = "new";
-                    saveFileDialog1.ShowDialog();
+                    if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                        return;
                     fname = saveFileDialog1.FileName;
                     ActiveForm.Text = fname;
                     if (saveFileDialog1.DefaultExt != string.Empty && fname != string.Empty)
                     {
-                        File.WriteAllText(fname, richTextBox2.Text);
+                        File.WriteAllText(fname, fastColoredTextBox1.Text);
                     }
                     else
                     {
@@ -66,16 +67,17 @@ namespace HotKeyEditor
                 }
             }
 
-            else if (e.Control && e.KeyCode == Keys.F)
+            else if (e.Control && e.Shift && e.KeyCode == Keys.F)
             {
                 fontDialog1.ShowDialog();
-                richTextBox2.Font = fontDialog1.Font;
+                fastColoredTextBox1.Font = fontDialog1.Font;
             }
 
             else if (e.Control && e.KeyCode == Keys.D)
             {
                 openFileDialog1.FileName = string.Empty;
-                openFileDialog1.ShowDialog();
+                if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
                 fname = openFileDialog1.FileName;
                 ActiveForm.Text = "Empty";
 
@@ -88,46 +90,50 @@ namespace HotKeyEditor
             else if (e.Control && e.KeyCode == Keys.S && e.Alt)
             {
                 string text = string.Empty;
-                text +=  "Font: " + richTextBox2.Font.Name + '\n';
-                text += '\n' + "FontSize: " + richTextBox2.Font.Size + '\n';
-                text += '\n' + "FontStyle: " + richTextBox2.Font.Style + '\n';
-                text += '\n' + "ForeColor: " + richTextBox2.ForeColor.ToString() + '\n';
-                text += '\n' + "BackColor: " + richTextBox2.BackColor.ToString();
+                text +=  "Font: " + fastColoredTextBox1.Font.Name + '\n';
+                text += '\n' + "FontSize: " + fastColoredTextBox1.Font.Size + '\n';
+                text += '\n' + "FontStyle: " + fastColoredTextBox1.Font.Style + '\n';
+                text += '\n' + "ForeColor: " + fastColoredTextBox1.ForeColor.ToString() + '\n';
+                text += '\n' + "BackColor: " + fastColoredTextBox1.BackColor.ToString();
                 File.WriteAllText("style.cfg", text);
             }
 
             else if (e.Control && e.KeyCode == Keys.R)
             {
-                colorDialog1.ShowDialog();
-                richTextBox2.ForeColor = colorDialog1.Color;
+                if (colorDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
+                fastColoredTextBox1.ForeColor = colorDialog1.Color;
             }
 
-            else if (e.Control && e.KeyCode == Keys.G)
+            else if (e.Control && e.Shift && e.KeyCode == Keys.G)
             {
-                colorDialog1.ShowDialog();
-                richTextBox2.BackColor = colorDialog1.Color;
+                if (colorDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
+                fastColoredTextBox1.BackColor = colorDialog1.Color;
             }
 
-            else if (e.Control && e.Shift && e.KeyCode == Keys.S)
+            else if (e.Control && e.KeyCode == Keys.A && e.Shift)
             {
                 saveFileDialog1.FileName = string.Empty;
-                saveFileDialog1.ShowDialog();
+                if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
                 fname = saveFileDialog1.FileName;
                 ActiveForm.Text = fname;
                 if (saveFileDialog1.DefaultExt != string.Empty && fname != string.Empty)
                 {
-                    File.WriteAllText(fname, richTextBox2.Text);
+                    File.WriteAllText(fname, fastColoredTextBox1.Text);
                 }
             }
 
             else if (e.Control && e.KeyCode == Keys.O)
             {
                 openFileDialog1.FileName = string.Empty;
-                openFileDialog1.ShowDialog();
+                if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
                 fname = openFileDialog1.FileName;
                 ActiveForm.Text = fname;
                 if (fname != string.Empty)
-                    richTextBox2.Text = File.ReadAllText(fname);
+                    fastColoredTextBox1.Text = File.ReadAllText(fname);
                 else
                 {
                     ActiveForm.Text = "Empty";
@@ -138,13 +144,14 @@ namespace HotKeyEditor
             else if (e.Control && e.Shift && e.KeyCode == Keys.N)
             {
                 saveFileDialog1.FileName = string.Empty;
-                saveFileDialog1.ShowDialog();
+                if (saveFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
                 fname = saveFileDialog1.FileName;
                 ActiveForm.Text = fname;
                 if (fname != string.Empty)
                 {
                     File.WriteAllText(fname, string.Empty);
-                    richTextBox2.Text = File.ReadAllText(fname);
+                    fastColoredTextBox1.Text = File.ReadAllText(fname);
                 } 
                 else
                 {
@@ -156,7 +163,8 @@ namespace HotKeyEditor
             else if (e.Control && e.KeyCode == Keys.P)
             {
                 openFileDialog1.FileName = string.Empty;
-                openFileDialog1.ShowDialog();
+                if (openFileDialog1.ShowDialog() == DialogResult.Cancel)
+                    return;
                 fname = openFileDialog1.FileName;
                 ActiveForm.Text = fname;
                 System.Drawing.Printing.PrintDocument document = new System.Drawing.Printing.PrintDocument();
@@ -164,7 +172,7 @@ namespace HotKeyEditor
                 printDialog1.Document = document;
                 printDialog1.ShowDialog();
             }
-
+            
             else if (e.Control && e.KeyCode == Keys.N)
             {
                 if (System.Diagnostics.Process.Start("HotKeyEditor.exe") == null)
